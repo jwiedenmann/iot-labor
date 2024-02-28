@@ -5,7 +5,7 @@ import paho.mqtt.client as mqtt
 # MQTT Broker settings
 MQTT_BROKER = "ai.tillh.de" 
 MQTT_PORT = 1883
-MQTT_TOPIC = "/dhai/Heidenheim/wiedenmannj.tin21@student.dhbw-heidenheim.de/imu"
+MQTT_TOPIC = "/dhai/Heidenheim/wiedenmannj.tin21@student.dhbw-heidenheim.de/#"
 
 DB_CONNECTION = None
 

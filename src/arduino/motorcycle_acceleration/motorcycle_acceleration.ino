@@ -19,7 +19,11 @@ void setup() {
   led::setup();
   led::off();
 
+  Serial.println();
+  Serial.println("Wifi connect");
   connectToWifi(5, 1000);
+  Serial.println();
+  Serial.println("Mqtt connect");
   connectToMqtt(5, 1000);
 
   imu::setup();
@@ -35,12 +39,12 @@ void loop() {
 
   // work to do in a cycle
   // collect data
-  if (currentTime - last_data_collection >= 100) {
-    imu::read(data);
-    imu_queue::enqueue(data);
-    led::gradientRedGreen(imu_queue::count(), IMU_QUEUE_SIZE);
-    last_data_collection = currentTime;
-  }
+  // if (currentTime - last_data_collection >= 100) {
+  //   imu::read(data);
+  //   imu_queue::enqueue(data);
+  //   led::gradientRedGreen(imu_queue::count(), IMU_QUEUE_SIZE);
+  //   last_data_collection = currentTime;
+  // }
 
   // push data away
 
@@ -53,6 +57,8 @@ int connectToWifi(int attempts, int delayTime) {
 
   while (wifiResult != WL_CONNECTED && counter < attempts) {
     wifiResult = wifi::connect();
+    Serial.print("Wifi result: ");
+    Serial.println(wifiResult);
 
     if (wifiResult == WL_CONNECTED) {
       led::green();
@@ -72,9 +78,11 @@ int connectToMqtt(int attempts, int delayTime) {
   int mqttResult = 0;
   int counter = 0;
 
-  while (mqttResult && counter < attempts) {
+  while (!mqttResult && counter < attempts) {
     mqttResult = mqtt::connect();
-
+    Serial.print("Mqtt result: ");
+    Serial.println(mqttResult);
+    
     if (!mqttResult) {
       led::green();
     } else {

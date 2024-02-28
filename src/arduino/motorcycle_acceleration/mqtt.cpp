@@ -15,6 +15,7 @@ MqttClient mqttClient(wifiClient);
 
 int connect() {
   led::write(102, 0, 102);
+  mqttClient.setUsernamePassword(MQTT_USER, MQTT_PASS);
   int result = mqttClient.connect(broker, port);
   led::off();
 

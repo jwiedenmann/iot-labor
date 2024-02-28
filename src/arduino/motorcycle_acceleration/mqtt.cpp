@@ -6,7 +6,7 @@ const char MQTT_USER[] = "wiedenmann";
 const char MQTT_PASS[] = "Bcdrf6.x";
 const char broker[] = "164.92.190.0";
 const int port = 1883;
-const char topic[] = "arduino/echo";
+const char topic[] = "/dhai/Heidenheim/wiedenmannj.tin21@student.dhbw-heidenheim.de/imu";
 
 std::string imuDataToJson(const imu::imuData& data);
 

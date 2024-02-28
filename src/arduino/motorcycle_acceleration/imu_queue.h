@@ -3,7 +3,7 @@
 
 #include "imu.h"
 
-#define IMU_QUEUE_SIZE 500
+#define IMU_QUEUE_SIZE 400
 
 namespace imu_queue {
 

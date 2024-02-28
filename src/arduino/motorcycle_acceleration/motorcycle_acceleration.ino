@@ -19,15 +19,10 @@ void setup() {
   led::setup();
   led::off();
 
-  Serial.println();
-  Serial.println("Wifi connect");
   connectToWifi(5, 1000);
-  Serial.println();
-  Serial.println("Mqtt connect");
   connectToMqtt(5, 1000);
 
   imu::setup();
-
   timestamp = millis();
 }
 
@@ -57,8 +52,6 @@ int connectToWifi(int attempts, int delayTime) {
 
   while (wifiResult != WL_CONNECTED && counter < attempts) {
     wifiResult = wifi::connect();
-    Serial.print("Wifi result: ");
-    Serial.println(wifiResult);
 
     if (wifiResult == WL_CONNECTED) {
       led::green();
@@ -80,10 +73,8 @@ int connectToMqtt(int attempts, int delayTime) {
 
   while (!mqttResult && counter < attempts) {
     mqttResult = mqtt::connect();
-    Serial.print("Mqtt result: ");
-    Serial.println(mqttResult);
     
-    if (!mqttResult) {
+    if (mqttResult) {
       led::green();
     } else {
       led::red();

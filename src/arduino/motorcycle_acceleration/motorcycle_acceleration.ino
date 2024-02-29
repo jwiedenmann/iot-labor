@@ -4,8 +4,6 @@
 #include "imu_queue.h"
 #include "mqtt.h"
 
-#include <ArduinoMqttClient.h>
-
 int connectToWifi(int attempts = 5, int delayTime = 0);
 
 long timestamp = 0;

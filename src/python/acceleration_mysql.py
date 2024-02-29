@@ -1,3 +1,4 @@
+import json
 import mysql.connector
 from mysql.connector import Error
 
@@ -32,9 +33,19 @@ def check_and_create_table(connection):
     else:
         create_table_query = f"""
         CREATE TABLE {TABLE_NAME} (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            info TEXT
+            id      INT AUTO_INCREMENT PRIMARY KEY,
+            millis  BIGINT  NOT NULL,
+            accX    FLOAT   NOT NULL,
+            accY    FLOAT   NOT NULL,
+            accZ    FLOAT   NOT NULL,
+            gyrX    FLOAT   NOT NULL,
+            gyrY    FLOAT   NOT NULL,
+            gyrZ    FLOAT   NOT NULL,
+            magX    FLOAT   NOT NULL,
+            magY    FLOAT   NOT NULL,
+            magZ    FLOAT   NOT NULL,
+            temp    FLOAT   NOT NULL,
+            insert_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
         """
         try:
@@ -43,15 +54,24 @@ def check_and_create_table(connection):
         except Error as e:
             print(f"Failed to create table {TABLE_NAME}: {e}")
 
-def insert_into_table(connection, name, info):
-    """Insert a row into the table."""
+def insert_into_table(connection, jsonData):
+    data = json.loads(jsonData)
+
     cursor = connection.cursor()
     insert_query = f"""
-    INSERT INTO {TABLE_NAME} (name, info)
-    VALUES (%s, %s);
+    INSERT INTO {TABLE_NAME} (millis, accX, accY, accZ, gyrX, gyrY, gyrZ, magX, magY, magZ, temp)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     """
     try:
-        cursor.execute(insert_query, (name, info))
+        cursor.execute(
+            insert_query,
+            (
+                data['millis'], 
+                data['accX'], data['accY'], data['accZ'], 
+                data['gyrX'], data['gyrY'], data['gyrZ'], 
+                data['magX'], data['magY'], data['magZ'],
+                data['temp']
+            ))
         connection.commit()
         print(f"Record inserted successfully into {TABLE_NAME} table.")
         return True

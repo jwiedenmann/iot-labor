@@ -1,6 +1,6 @@
 import time
 import paho.mqtt.client as mqtt
-# import acceleration_mysql as db
+import acceleration_mysql as db
 
 # MQTT Broker settings
 MQTT_BROKER = "ai.tillh.de" 
@@ -13,14 +13,15 @@ def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to MQTT Broker!")
         client.subscribe(MQTT_TOPIC)
-        # connect_database()
+        connect_database()
     else:
         print(f"Failed to connect, return code {rc}\n")
 
 
 def on_message(client, userdata, msg):
-    print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-    # insert_database()
+    jsondata = msg.payload.decode()
+    print(f"Received `{jsondata}` from `{msg.topic}` topic")
+    insert_database(jsondata)
 
 
 def on_disconnect(client, userdata, rc):
@@ -30,20 +31,22 @@ def on_disconnect(client, userdata, rc):
         print("Disconnected from MQTT Broker.")
 
 
-# def connect_database():
-#     while (DB_CONNECTION is None):
-#         DB_CONNECTION = db.connect()
-#         time.sleep(5)
+def connect_database():
+    DB_CONNECTION = db.connect()
 
-#     db.check_and_create_table(DB_CONNECTION)
+    while (DB_CONNECTION is None):
+        DB_CONNECTION = db.connect()
+        time.sleep(5)
+
+    db.check_and_create_table(DB_CONNECTION)
 
 
-# def insert_database():
-#     result = db.insert_into_table()
+def insert_database(jsondata):
+    result = db.insert_into_table()
     
-#     while(result == False):
-#         connect_database()
-#         result = db.insert_into_table()
+    while(result == False):
+        connect_database()
+        result = db.insert_into_table(DB_CONNECTION, jsondata)
 
 if __name__ == "__main__":
     client = mqtt.Client()

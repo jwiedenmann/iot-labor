@@ -48,7 +48,7 @@ def insert_database(jsondata):
         connect_database()
         result = db.insert_into_table(DB_CONNECTION, jsondata)
 
-if __name__ == "__main__":
+def run():
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message

@@ -6,7 +6,7 @@
 namespace imu {
 
 typedef struct {
-  long millis;
+  unsigned long millis;
   float accX;
   float accY;
   float accZ;

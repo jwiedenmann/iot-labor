@@ -1,4 +1,3 @@
-import time
 import paho.mqtt.client as mqtt
 import acceleration_mysql as db
 
@@ -6,8 +5,6 @@ import acceleration_mysql as db
 MQTT_BROKER = "ai.tillh.de" 
 MQTT_PORT = 1883
 MQTT_TOPIC = "/dhai/Heidenheim/wiedenmannj.tin21@student.dhbw-heidenheim.de/#"
-
-DB_CONNECTION = None
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -32,21 +29,18 @@ def on_disconnect(client, userdata, rc):
 
 
 def connect_database():
-    DB_CONNECTION = db.connect()
-
-    while (DB_CONNECTION is None):
-        DB_CONNECTION = db.connect()
-        time.sleep(5)
-
-    db.check_and_create_table(DB_CONNECTION)
+    connection = db.connect()
+    db.check_and_create_table(connection)
+    connection.close()
 
 
 def insert_database(jsondata):
-    result = db.insert_into_table()
-    
+    connection = db.connect()
+    result = db.insert_into_table(connection, jsondata)
+
     while(result == False):
-        connect_database()
-        result = db.insert_into_table(DB_CONNECTION, jsondata)
+        connection = db.connect()
+        result = db.insert_into_table(connection, jsondata)
 
 def run():
     client = mqtt.Client()

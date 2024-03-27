@@ -1,4 +1,5 @@
 import json
+import time
 import mysql.connector
 from mysql.connector import Error
 
@@ -8,20 +9,22 @@ PASSWORD = 'Bcdrf6.x'
 TABLE_NAME = 'acceleration'
 
 def connect():
-    try:
-        connection = mysql.connector.connect(
-            database=DATABASE,
-            user=USER,
-            password=PASSWORD
-        )
+    connection = None
 
-        if connection.is_connected():
-            db_info = connection.get_server_info()
-            print(f"Connected to MySQL Server version {db_info}")
+    while (connection is None):
+        try:
+            connection = mysql.connector.connect(
+                database=DATABASE,
+                user=USER,
+                password=PASSWORD
+            )
+
             return connection
-    except Error as e:
-        print(f"Error while connecting to MySQL: {e}")
-        return None
+        
+        except Error as e:
+            print(f"Error while connecting to MySQL: {e}")
+
+        time.sleep(5)
 
 def check_and_create_table(connection):
     """Check if a table exists and create it if not."""
@@ -33,8 +36,8 @@ def check_and_create_table(connection):
     else:
         create_table_query = f"""
         CREATE TABLE {TABLE_NAME} (
-            id      INT AUTO_INCREMENT PRIMARY KEY,
-            millis  BIGINT  NOT NULL,
+            id      INT     AUTO_INCREMENT PRIMARY KEY,
+            millis  BIGINT  UNSIGNED    NOT NULL,
             accX    FLOAT   NOT NULL,
             accY    FLOAT   NOT NULL,
             accZ    FLOAT   NOT NULL,

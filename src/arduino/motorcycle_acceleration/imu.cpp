@@ -3,7 +3,6 @@
 // The value of the last bit of the I2C address.
 // On the SparkFun 9DoF IMU breakout the default is 1, and when the ADR jumper is closed the value becomes 0
 #define AD0_VAL 1
-#define SERIAL_PORT Serial
 
 namespace imu {
 
@@ -17,10 +16,7 @@ void setup() {
   while (!initialized) {
     myICM.begin(Wire, AD0_VAL);
 
-    SERIAL_PORT.print(F("Initialization of the sensor returned: "));
-    SERIAL_PORT.println(myICM.statusString());
     if (myICM.status != ICM_20948_Stat_Ok) {
-      SERIAL_PORT.println("Trying again...");
       delay(500);
     } else {
       initialized = true;
@@ -59,13 +55,6 @@ void setup() {
 
   // Start the magnetometer
   myICM.startupMagnetometer();
-
-  if (myICM.status != ICM_20948_Stat_Ok) {
-    SERIAL_PORT.print(F("myicm returned: "));
-    SERIAL_PORT.println(myICM.statusString());
-  } else {
-    SERIAL_PORT.print("status ok");
-  }
 }
 
 int read(imuData& data) {

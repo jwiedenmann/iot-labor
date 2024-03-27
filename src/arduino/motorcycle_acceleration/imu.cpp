@@ -62,6 +62,9 @@ int read(imuData& data) {
     return 1;
   }
 
+  // get the data
+  myICM.getAGMT(); 
+
   data.millis = millis();
 
   data.accX = myICM.accX();
@@ -77,6 +80,7 @@ int read(imuData& data) {
   data.magZ = myICM.magZ();
 
   data.temp = myICM.temp();
+
   return 0;
 }
 

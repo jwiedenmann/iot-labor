@@ -84,9 +84,6 @@ void loop() {
       connectToMqtt(1, 0);
     }
 
-    Serial.print("acc: ");
-    Serial.println(push_data.accX);
-
     hasMqttConnection = mqtt::send(push_data);
     lastUploadSpeed = millis() - currentTime;
 

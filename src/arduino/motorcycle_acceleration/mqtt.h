@@ -11,8 +11,10 @@
 
 namespace mqtt {
 
+// returns 1 on success
 int connect();
-void send(const imu::imuData& data);
+// returns 1 on success
+int send(const imu::imuData& data);
 
 }
 

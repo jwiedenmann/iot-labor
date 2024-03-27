@@ -22,11 +22,11 @@ int connect() {
   return result;
 }
 
-void send(const imu::imuData& data) {
+int send(const imu::imuData& data) {
   mqttClient.beginMessage(topic);
   std::string s = imuDataToJson(data);
   mqttClient.print(s.data());
-  mqttClient.endMessage();
+  return mqttClient.endMessage();
 }
 
 std::string imuDataToJson(const imu::imuData& data) {

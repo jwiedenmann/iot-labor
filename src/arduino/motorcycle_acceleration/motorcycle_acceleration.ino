@@ -8,11 +8,6 @@ int connectToWifi(int attempts = 5, int delayTime = 0);
 int connectToMqtt(int attempts = 5, int delayTime = 0);
 
 void setup() {
-  Serial.begin(9600);
-  while (!Serial) {
-    ;  // wait for serial port to connect. Needed for native USB port only
-  }
-
   led::setup();
   led::off();
 
@@ -22,8 +17,8 @@ void setup() {
   imu::setup();
 }
 
-bool wasWifiDisconnected = false;
-bool hasMqttConnection = false;
+bool wasWifiDisconnected = true;
+bool hasMqttConnection = true;
 
 imu::imuData read_data;
 imu::imuData push_data;
@@ -53,6 +48,11 @@ void loop() {
 
     // retry if mqtt push was not successful
     wasWifiDisconnected = !hasMqttConnection;
+
+    // sync the clock, stupid i know
+    while (millis() % 100 != 0) {}
+    delay(99);
+
     return;
   }
 

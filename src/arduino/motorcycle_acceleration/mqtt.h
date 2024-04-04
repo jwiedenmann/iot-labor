@@ -3,6 +3,7 @@
 
 #include "led.h"
 #include "imu.h"
+#include "secrets.h"
 
 #include <ArduinoMqttClient.h>
 #include <string>

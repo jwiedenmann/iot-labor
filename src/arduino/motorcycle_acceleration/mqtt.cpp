@@ -2,12 +2,6 @@
 
 namespace mqtt {
 
-const char MQTT_USER[] = "wiedenmann";
-const char MQTT_PASS[] = "Bcdrf6.x";
-const char broker[] = "164.92.190.0";
-const int port = 1883;
-const char topic[] = "/dhai/Heidenheim/wiedenmannj.tin21@student.dhbw-heidenheim.de/imu";
-
 std::string imuDataToJson(const imu::imuData& data);
 
 WiFiClient wifiClient;
@@ -15,15 +9,15 @@ MqttClient mqttClient(wifiClient);
 
 int connect() {
   led::write(102, 0, 102);
-  mqttClient.setUsernamePassword(MQTT_USER, MQTT_PASS);
-  int result = mqttClient.connect(broker, port);
+  mqttClient.setUsernamePassword(secrets::mqtt_user, secrets::mqtt_pass);
+  int result = mqttClient.connect(secrets::broker, secrets::port);
   led::off();
 
   return result;
 }
 
 int send(const imu::imuData& data) {
-  mqttClient.beginMessage(topic);
+  mqttClient.beginMessage(secrets::topic);
   std::string s = imuDataToJson(data);
   mqttClient.print(s.data());
   return mqttClient.endMessage();

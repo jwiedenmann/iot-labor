@@ -63,7 +63,7 @@ int read(imuData& data) {
   }
 
   // get the data
-  myICM.getAGMT(); 
+  myICM.getAGMT();
 
   data.millis = millis();
 
@@ -82,6 +82,58 @@ int read(imuData& data) {
   data.temp = myICM.temp();
 
   return 0;
+}
+
+imuData oversampleData;
+int oversampleCount;
+
+int oversample() {
+  imuData tempData;
+  int result = read(tempData);
+
+  if (result == 1) return 1;
+
+  oversampleData.accX += tempData.accX;
+  oversampleData.accY += tempData.accY;
+  oversampleData.accZ += tempData.accZ;
+
+  oversampleData.gyrX += tempData.gyrX;
+  oversampleData.gyrY += tempData.gyrY;
+  oversampleData.gyrZ += tempData.gyrZ;
+
+  oversampleData.magX += tempData.magX;
+  oversampleData.magY += tempData.magY;
+  oversampleData.magZ += tempData.magZ;
+
+  oversampleData.temp += tempData.temp;
+  oversampleCount++;
+
+  return 0;
+}
+
+void readOversample(imuData& data) {
+  unsigned long time = millis();
+  oversample();
+
+  data.millis = time;
+
+  data.accX = oversampleData.accX / oversampleCount;
+  data.accY = oversampleData.accY / oversampleCount;
+  data.accZ = oversampleData.accZ / oversampleCount;
+
+  data.gyrX = oversampleData.gyrX / oversampleCount;
+  data.gyrY = oversampleData.gyrY / oversampleCount;
+  data.gyrZ = oversampleData.gyrZ / oversampleCount;
+
+  data.magX = oversampleData.magX / oversampleCount;
+  data.magY = oversampleData.magY / oversampleCount;
+  data.magZ = oversampleData.magZ / oversampleCount;
+
+  data.temp = oversampleData.temp / oversampleCount;
+
+  imuData defaultImuData;
+  oversampleData = defaultImuData;
+  oversampleCount = 0;
 }
 
 }

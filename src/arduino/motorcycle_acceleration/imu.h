@@ -23,6 +23,10 @@ extern ICM_20948_I2C myICM;
 
 void setup();
 int read(imuData& data);
+// reads the current values and adds them to a pool, giving an average value over time
+int oversample();
+// reads the averaged value and resets the pool
+void readOversample(imuData& data); 
 
 }
 

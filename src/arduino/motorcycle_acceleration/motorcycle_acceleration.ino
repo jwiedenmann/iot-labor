@@ -65,7 +65,7 @@ void loop() {
   // collect data
   unsigned long currentTime = millis();
   if (currentTime - lastDataCollection >= dataCollectionIntervall) {
-    imu::read(read_data);
+    imu::readOversample(read_data);
     imu_queue::enqueue(read_data);
     led::gradientRedGreen(imu_queue::count(), IMU_QUEUE_SIZE);
     lastDataCollection = currentTime;
@@ -92,6 +92,14 @@ void loop() {
     if (delayTime > 0) {
       delay(delayTime);
     }
+  }
+
+  // oversample data
+  // collect the current values and add them to an average
+  // 4ms buffer for this action
+  currentTime = millis();
+  if (currentTime - lastDataCollection + 4 < dataCollectionIntervall - 2) {
+    imu::oversample();
   }
 
   // adjust data collection speed based on upload speed and connection status

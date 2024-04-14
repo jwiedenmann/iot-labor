@@ -11,8 +11,9 @@ void setup() {
   led::setup();
   led::off();
 
-  connectToWifi(5, 1000);
-  connectToMqtt(5, 1000);
+  if (connectToWifi(5, 1000) == WL_CONNECTED) {
+    connectToMqtt(5, 1000);
+  }
 
   imu::setup();
 }
@@ -33,8 +34,9 @@ void loop() {
   // reconnect if wifi connection is lost
   if (wifi::status() != WL_CONNECTED) {
     wasWifiDisconnected = true;
-    connectToWifi(10, 1000);
-    connectToMqtt(5, 1000);
+    if (connectToWifi(10, 1000) == WL_CONNECTED) {
+      connectToMqtt(5, 1000);
+    }
     return;
   }
 

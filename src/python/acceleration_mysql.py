@@ -1,4 +1,3 @@
-import json
 import time
 import mysql.connector
 from mysql.connector import Error
@@ -58,8 +57,6 @@ def check_and_create_table(connection):
             print(f"Failed to create table {TABLE_NAME}: {e}")
 
 def insert_into_table(connection, jsonData):
-    data = json.loads(jsonData)
-
     cursor = connection.cursor()
     insert_query = f"""
     INSERT INTO {TABLE_NAME} (millis, accX, accY, accZ, gyrX, gyrY, gyrZ, magX, magY, magZ, temp)
@@ -69,11 +66,11 @@ def insert_into_table(connection, jsonData):
         cursor.execute(
             insert_query,
             (
-                data['millis'], 
-                data['accX'], data['accY'], data['accZ'], 
-                data['gyrX'], data['gyrY'], data['gyrZ'], 
-                data['magX'], data['magY'], data['magZ'],
-                data['temp']
+                jsonData['millis'], 
+                jsonData['accX'], jsonData['accY'], jsonData['accZ'], 
+                jsonData['gyrX'], jsonData['gyrY'], jsonData['gyrZ'], 
+                jsonData['magX'], jsonData['magY'], jsonData['magZ'],
+                jsonData['temp']
             ))
         connection.commit()
         print(f"Record inserted successfully into {TABLE_NAME} table.")

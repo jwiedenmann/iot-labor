@@ -1,4 +1,5 @@
 import json
+import re
 import paho.mqtt.client as mqtt
 import acceleration_mysql as db
 
@@ -20,15 +21,18 @@ def on_message(client, userdata, msg):
     jsondata = msg.payload.decode()
     data = None
 
+    print(f"Received `{jsondata}` from `{msg.topic}` topic")
+
     try:
         # Try to load JSON to handle invalid NaN or Infinity values
         data = json.loads(jsondata)
     except json.JSONDecodeError:
         # Replace 'NaN' with None (which becomes 'null' in JSON)
-        cleaned_jsondata = jsondata.replace('NaN', '0')
+        cleaned_jsondata = re.sub(r'\b[nN][aA][nN]\b', '0', jsondata)
+        print(f"Cleaned json data: `{jsondata}`")
+
         data = json.loads(cleaned_jsondata)  # Re-parse the cleaned JSON
 
-    print(f"Received `{jsondata}` from `{msg.topic}` topic")
     insert_database(data)
 
 

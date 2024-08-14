@@ -13,34 +13,38 @@ sensor_columns = ['accX', 'accY', 'accZ', 'gyrX', 'gyrY', 'gyrZ', 'magX', 'magY'
 # Replace values above 10000 or below -10000 with NaN
 df[sensor_columns] = df[sensor_columns].applymap(lambda x: np.nan if x > 10000 or x < -10000 else x)
 
-# Visualize the cleaned data
+# Toggle variable to choose between 'millis' or range(len(millis)) for the x-axis
+use_millis = False  # Set this to True to use 'millis', or False to use the index range
+
+x_axis = df['millis'] if use_millis else range(len(df['millis']))
+
 plt.figure(figsize=(14, 10))
 
 # Time Series Plot for Accelerometer, Gyroscope, and Magnetometer readings
 plt.subplot(3, 1, 1)
-plt.plot(df['millis'], df['accX'], label='accX')
-plt.plot(df['millis'], df['accY'], label='accY')
-plt.plot(df['millis'], df['accZ'], label='accZ')
+plt.plot(x_axis, df['accX'], label='accX')
+plt.plot(x_axis, df['accY'], label='accY')
+plt.plot(x_axis, df['accZ'], label='accZ')
 plt.title('Cleaned Accelerometer Readings Over Time')
-plt.xlabel('Milliseconds')
+plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
 plt.ylabel('Acceleration (accX, accY, accZ)')
 plt.legend()
 
 plt.subplot(3, 1, 2)
-plt.plot(df['millis'], df['gyrX'], label='gyrX')
-plt.plot(df['millis'], df['gyrY'], label='gyrY')
-plt.plot(df['millis'], df['gyrZ'], label='gyrZ')
+plt.plot(x_axis, df['gyrX'], label='gyrX')
+plt.plot(x_axis, df['gyrY'], label='gyrY')
+plt.plot(x_axis, df['gyrZ'], label='gyrZ')
 plt.title('Cleaned Gyroscope Readings Over Time')
-plt.xlabel('Milliseconds')
+plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
 plt.ylabel('Gyroscope (gyrX, gyrY, gyrZ)')
 plt.legend()
 
 plt.subplot(3, 1, 3)
-plt.plot(df['millis'], df['magX'], label='magX')
-plt.plot(df['millis'], df['magY'], label='magY')
-plt.plot(df['millis'], df['magZ'], label='magZ')
+plt.plot(x_axis, df['magX'], label='magX')
+plt.plot(x_axis, df['magY'], label='magY')
+plt.plot(x_axis, df['magZ'], label='magZ')
 plt.title('Cleaned Magnetometer Readings Over Time')
-plt.xlabel('Milliseconds')
+plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
 plt.ylabel('Magnetometer (magX, magY, magZ)')
 plt.legend()
 

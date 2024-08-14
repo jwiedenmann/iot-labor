@@ -10,13 +10,26 @@ df = pd.read_csv(file_path, delimiter=';')
 # Define the columns to clean
 sensor_columns = ['accX', 'accY', 'accZ', 'gyrX', 'gyrY', 'gyrZ', 'magX', 'magY', 'magZ', 'temp']
 
-# Replace values above 10000 or below -10000 with NaN
-df[sensor_columns] = df[sensor_columns].map(lambda x: np.nan if x > 10000 or x < -10000 else x)
+# Replace values above 10000 or below -10000 with NaN using map
+for column in sensor_columns:
+    df[column] = df[column].map(lambda x: np.nan if x > 10000 or x < -10000 else x)
 
-# Toggle variable to choose between 'millis' or range(len(millis)) for the x-axis
-use_millis = True  # Set this to True to use 'millis', or False to use the index range
+# Adjusting the millis values for resets by iterating over them
+millis_adjusted = []
+offset = 0
 
-x_axis = df['millis'] if use_millis else range(len(df['millis']))
+for i in range(len(df['millis'])):
+    if i > 0 and df['millis'][i] < df['millis'][i - 1]:
+        offset += df['millis'][i - 1]  # Add the last value before the reset to the offset
+        print(offset)
+    millis_adjusted.append(df['millis'][i] + offset)
+
+df['millis_adjusted'] = millis_adjusted
+
+# Toggle variable to choose between 'millis_adjusted' or range(len(millis)) for the x-axis
+use_millis = True  # Set this to True to use 'millis_adjusted', or False to use the index range
+
+x_axis = df['millis_adjusted'] if use_millis else range(len(df['millis_adjusted']))
 
 plt.figure(figsize=(14, 10))
 

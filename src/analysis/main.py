@@ -11,17 +11,17 @@ df = pd.read_csv(file_path, delimiter=';')
 sensor_columns = ['accX', 'accY', 'accZ', 'gyrX', 'gyrY', 'gyrZ', 'magX', 'magY', 'magZ', 'temp']
 
 # Replace values above 10000 or below -10000 with NaN
-df[sensor_columns] = df[sensor_columns].applymap(lambda x: np.nan if x > 10000 or x < -10000 else x)
+df[sensor_columns] = df[sensor_columns].map(lambda x: np.nan if x > 10000 or x < -10000 else x)
 
 # Toggle variable to choose between 'millis' or range(len(millis)) for the x-axis
-use_millis = False  # Set this to True to use 'millis', or False to use the index range
+use_millis = True  # Set this to True to use 'millis', or False to use the index range
 
 x_axis = df['millis'] if use_millis else range(len(df['millis']))
 
 plt.figure(figsize=(14, 10))
 
 # Time Series Plot for Accelerometer, Gyroscope, and Magnetometer readings
-plt.subplot(3, 1, 1)
+plt.subplot(4, 1, 1)
 plt.plot(x_axis, df['accX'], label='accX')
 plt.plot(x_axis, df['accY'], label='accY')
 plt.plot(x_axis, df['accZ'], label='accZ')
@@ -30,7 +30,7 @@ plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
 plt.ylabel('Acceleration (accX, accY, accZ)')
 plt.legend()
 
-plt.subplot(3, 1, 2)
+plt.subplot(4, 1, 2)
 plt.plot(x_axis, df['gyrX'], label='gyrX')
 plt.plot(x_axis, df['gyrY'], label='gyrY')
 plt.plot(x_axis, df['gyrZ'], label='gyrZ')
@@ -39,13 +39,20 @@ plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
 plt.ylabel('Gyroscope (gyrX, gyrY, gyrZ)')
 plt.legend()
 
-plt.subplot(3, 1, 3)
+plt.subplot(4, 1, 3)
 plt.plot(x_axis, df['magX'], label='magX')
 plt.plot(x_axis, df['magY'], label='magY')
 plt.plot(x_axis, df['magZ'], label='magZ')
 plt.title('Cleaned Magnetometer Readings Over Time')
 plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
 plt.ylabel('Magnetometer (magX, magY, magZ)')
+plt.legend()
+
+plt.subplot(4, 1, 4)
+plt.plot(x_axis, df['temp'], label='temperature')
+plt.title('Cleaned Temperature Readings Over Time')
+plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
+plt.ylabel('Temperature')
 plt.legend()
 
 plt.tight_layout()

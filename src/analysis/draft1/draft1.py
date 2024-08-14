@@ -86,16 +86,3 @@ plt.tight_layout()
 if save_plots:
     plt.savefig('correlation_matrix.png')
 plt.show()
-
-# Distribution Plots for each cleaned sensor's readings
-plt.figure(figsize=(14, 12))
-for i, col in enumerate(sensor_columns):
-    plt.subplot(5, 2, i+1)
-    sns.histplot(df[col].dropna(), bins=50, kde=True, color='skyblue', edgecolor='black')
-    plt.title(f'Distribution of Cleaned {col}')
-    plt.xlabel(col)
-    plt.ylabel('Frequency')
-plt.tight_layout()
-if save_plots:
-    plt.savefig('sensor_distributions.png')
-plt.show()

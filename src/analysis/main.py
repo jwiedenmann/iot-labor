@@ -21,7 +21,6 @@ offset = 0
 for i in range(len(df['millis'])):
     if i > 0 and df['millis'][i] < df['millis'][i - 1]:
         offset += df['millis'][i - 1]  # Add the last value before the reset to the offset
-        print(offset)
     millis_adjusted.append(df['millis'][i] + offset)
 
 df['millis_adjusted'] = millis_adjusted

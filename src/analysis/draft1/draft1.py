@@ -18,10 +18,10 @@ save_plots = True  # Set to True to save the plots to files
 
 # Time Series Plot for Accelerometer, Gyroscope, and Magnetometer readings
 plt.figure(figsize=(14, 10))
-
 x_axis = df['insert_time']
 
-plt.subplot(3, 1, 1)
+# Accelerometer Readings
+plt.subplot(4, 1, 1)
 plt.plot(x_axis, df['accX'], label='accX')
 plt.plot(x_axis, df['accY'], label='accY')
 plt.plot(x_axis, df['accZ'], label='accZ')
@@ -29,8 +29,14 @@ plt.title('Cleaned Accelerometer Readings Over Time')
 plt.xlabel('Time')
 plt.ylabel('Acceleration (accX, accY, accZ)')
 plt.legend()
+plt.tight_layout()
+if save_plots:
+    plt.savefig('accelerometer_readings.png')
+plt.show()
 
-plt.subplot(3, 1, 2)
+# Gyroscope Readings
+plt.figure(figsize=(14, 10))
+plt.subplot(4, 1, 2)
 plt.plot(x_axis, df['gyrX'], label='gyrX')
 plt.plot(x_axis, df['gyrY'], label='gyrY')
 plt.plot(x_axis, df['gyrZ'], label='gyrZ')
@@ -38,8 +44,14 @@ plt.title('Cleaned Gyroscope Readings Over Time')
 plt.xlabel('Time')
 plt.ylabel('Gyroscope (gyrX, gyrY, gyrZ)')
 plt.legend()
+plt.tight_layout()
+if save_plots:
+    plt.savefig('gyroscope_readings.png')
+plt.show()
 
-plt.subplot(3, 1, 3)
+# Magnetometer Readings
+plt.figure(figsize=(14, 10))
+plt.subplot(4, 1, 3)
 plt.plot(x_axis, df['magX'], label='magX')
 plt.plot(x_axis, df['magY'], label='magY')
 plt.plot(x_axis, df['magZ'], label='magZ')
@@ -47,10 +59,22 @@ plt.title('Cleaned Magnetometer Readings Over Time')
 plt.xlabel('Time')
 plt.ylabel('Magnetometer (magX, magY, magZ)')
 plt.legend()
-
 plt.tight_layout()
 if save_plots:
-    plt.savefig('sensor_time_series.png')
+    plt.savefig('magnetometer_readings.png')
+plt.show()
+
+# Temperature Readings
+plt.figure(figsize=(14, 10))
+plt.subplot(4, 1, 4)
+plt.plot(x_axis, df['temp'], label='temperature')
+plt.title('Cleaned Temperature Readings Over Time')
+plt.xlabel('Time')
+plt.ylabel('Temperature')
+plt.legend()
+plt.tight_layout()
+if save_plots:
+    plt.savefig('temperature_readings.png')
 plt.show()
 
 # Correlation Matrix for cleaned data
@@ -58,6 +82,7 @@ plt.figure(figsize=(10, 8))
 corr_matrix = df[sensor_columns].corr()
 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f")
 plt.title('Correlation Matrix of Cleaned Sensor Readings')
+plt.tight_layout()
 if save_plots:
     plt.savefig('correlation_matrix.png')
 plt.show()
@@ -66,11 +91,10 @@ plt.show()
 plt.figure(figsize=(14, 12))
 for i, col in enumerate(sensor_columns):
     plt.subplot(5, 2, i+1)
-    plt.hist(df[col].dropna(), bins=50, color='skyblue', edgecolor='black')
+    sns.histplot(df[col].dropna(), bins=50, kde=True, color='skyblue', edgecolor='black')
     plt.title(f'Distribution of Cleaned {col}')
     plt.xlabel(col)
     plt.ylabel('Frequency')
-
 plt.tight_layout()
 if save_plots:
     plt.savefig('sensor_distributions.png')

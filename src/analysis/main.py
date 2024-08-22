@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the data from the CSV file
-file_path = 'C:\\Users\\jwiedenmann\\source\\dhbw_projects\\iot-labor\\data\\test.csv'
+file_path = 'C:\\Users\\jwiedenmann\\source\\dhbw_projects\\iot-labor\\data\\test2.csv'
 df = pd.read_csv(file_path, delimiter=';')
 
 # Define the columns to clean
@@ -33,7 +33,7 @@ x_axis = df['millis_adjusted'] if use_millis else range(len(df['millis_adjusted'
 plt.figure(figsize=(14, 10))
 
 # Time Series Plot for Accelerometer, Gyroscope, and Magnetometer readings
-plt.subplot(4, 1, 1)
+plt.subplot(3, 1, 1)
 plt.plot(x_axis, df['accX'], label='accX')
 plt.plot(x_axis, df['accY'], label='accY')
 plt.plot(x_axis, df['accZ'], label='accZ')
@@ -42,7 +42,7 @@ plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
 plt.ylabel('Acceleration (accX, accY, accZ)')
 plt.legend()
 
-plt.subplot(4, 1, 2)
+plt.subplot(3, 1, 2)
 plt.plot(x_axis, df['gyrX'], label='gyrX')
 plt.plot(x_axis, df['gyrY'], label='gyrY')
 plt.plot(x_axis, df['gyrZ'], label='gyrZ')
@@ -51,20 +51,13 @@ plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
 plt.ylabel('Gyroscope (gyrX, gyrY, gyrZ)')
 plt.legend()
 
-plt.subplot(4, 1, 3)
+plt.subplot(3, 1, 3)
 plt.plot(x_axis, df['magX'], label='magX')
 plt.plot(x_axis, df['magY'], label='magY')
 plt.plot(x_axis, df['magZ'], label='magZ')
 plt.title('Cleaned Magnetometer Readings Over Time')
 plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
 plt.ylabel('Magnetometer (magX, magY, magZ)')
-plt.legend()
-
-plt.subplot(4, 1, 4)
-plt.plot(x_axis, df['temp'], label='temperature')
-plt.title('Cleaned Temperature Readings Over Time')
-plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
-plt.ylabel('Temperature')
 plt.legend()
 
 plt.tight_layout()

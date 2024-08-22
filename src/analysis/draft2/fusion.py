@@ -49,36 +49,38 @@ df['accX_corrected'] = df['accX'] - accX_bias
 df['accY_corrected'] = df['accY'] - accY_bias
 df['accZ_corrected'] = df['accZ'] - accZ_bias
 
-# Calculate the tilt angle correction based on the static offset observed in the initial data
-tilt_angle_correction_simple = np.arcsin(-0.13 / 9.81)  # Based on the initial observed tilt of -130mg
+# Load the lean angle from the complementary filter (assuming it has been calculated in gyro.py)
+# For demonstration, I'll use the calculated tilt angle as a placeholder
+df['lean_angle_rad'] = np.radians(df['tilt_angle'])  # Replace with actual lean angle from complementary filter
 
-# Apply the simpler static rotation correction to the acceleration data
-df['accX_corrected_simple'] = df['accX_corrected'] * np.cos(tilt_angle_correction_simple) - df['accZ_corrected'] * np.sin(tilt_angle_correction_simple)
-df['accZ_corrected_simple'] = df['accX_corrected'] * np.sin(tilt_angle_correction_simple) + df['accZ_corrected'] * np.cos(tilt_angle_correction_simple)
+# Apply rotation based on the lean angle to correct the acceleration data
+df['accX_corrected_lean'] = df['accX_corrected'] * np.cos(df['lean_angle_rad']) - df['accZ_corrected'] * np.sin(df['lean_angle_rad'])
+df['accY_corrected_lean'] = df['accY_corrected']  # Y remains unchanged as the lean is in the X-Z plane
+df['accZ_corrected_lean'] = df['accX_corrected'] * np.sin(df['lean_angle_rad']) + df['accZ_corrected'] * np.cos(df['lean_angle_rad'])
 
-# Plot the corrected acceleration data with the simpler static rotation correction
+# Plot the corrected acceleration data using the lean angle from the complementary filter
 plt.figure(figsize=(14, 10))
 
-# Corrected Acceleration X-axis with Simple Static Rotation
+# Corrected Acceleration X-axis with Lean Angle Correction
 plt.subplot(3, 1, 1)
-plt.plot(df['millis_adjusted'], df['accX_corrected_simple'], label='Corrected accX with Simple Static Rotation', linewidth=2)
-plt.title('Corrected Acceleration X-axis Readings (Simple Static Rotation)')
+plt.plot(df['millis_adjusted'], df['accX_corrected_lean'], label='Corrected accX with Lean Angle Correction', linewidth=2)
+plt.title('Corrected Acceleration X-axis Readings (Lean Angle Correction)')
 plt.xlabel('Milliseconds')
 plt.ylabel('Acceleration X (m/s²)')
 plt.legend()
 
-# Corrected Acceleration Y-axis remains the same
+# Corrected Acceleration Y-axis (unchanged)
 plt.subplot(3, 1, 2)
-plt.plot(df['millis_adjusted'], df['accY_corrected'], label='Corrected accY', linewidth=2)
+plt.plot(df['millis_adjusted'], df['accY_corrected_lean'], label='Corrected accY', linewidth=2)
 plt.title('Corrected Acceleration Y-axis Readings')
 plt.xlabel('Milliseconds')
 plt.ylabel('Acceleration Y (m/s²)')
 plt.legend()
 
-# Corrected Acceleration Z-axis with Simple Static Rotation
+# Corrected Acceleration Z-axis with Lean Angle Correction
 plt.subplot(3, 1, 3)
-plt.plot(df['millis_adjusted'], df['accZ_corrected_simple'], label='Corrected accZ with Simple Static Rotation', linewidth=2)
-plt.title('Corrected Acceleration Z-axis Readings (Simple Static Rotation)')
+plt.plot(df['millis_adjusted'], df['accZ_corrected_lean'], label='Corrected accZ with Lean Angle Correction', linewidth=2)
+plt.title('Corrected Acceleration Z-axis Readings (Lean Angle Correction)')
 plt.xlabel('Milliseconds')
 plt.ylabel('Acceleration Z (m/s²)')
 plt.legend()

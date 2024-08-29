@@ -14,6 +14,13 @@ sensor_columns = ['accX', 'accY', 'accZ', 'gyrX', 'gyrY', 'gyrZ', 'magX', 'magY'
 for column in sensor_columns:
     df[column] = df[column].map(lambda x: np.nan if x > 10000 or x < -10000 else x)
 
+# Define the size of the rolling window (you can adjust this)
+window_size = 3
+
+# Replace NaN values with the local average using a rolling window
+for column in sensor_columns:
+    df[column] = df[column].fillna(df[column].rolling(window=window_size, min_periods=1, center=True).mean())
+
 # Adjusting the millis values for resets by iterating over them
 millis_adjusted = []
 offset = 0

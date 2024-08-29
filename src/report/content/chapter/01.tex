@@ -1,3 +1,48 @@
 %!TEX root = ../../main.tex
 
-\chapter{Das erste Kapitel}
+\chapter{Introduction}
+
+The aim of this project is to derive as much insight as possible from the sensor data collected during various motorcycle rides and evaluate my riding performance. The data set consists of approximately 500,000 data points, recorded using an \ac{IMU}. The sensors in use include an accelerometer, gyroscope, magnetometer, and temperature sensor, capturing detailed motion and environmental information throughout the rides.
+
+The focus of this project is particularly on the accelerometer data. I aim to assess my motorcycle riding skills by analyzing how close I come to the maximum possible g-forces during turns, which is a key indicator of riding performance and cornering capability. This analysis will allow me to make informed statements about my riding precision and whether I am optimizing my handling in terms of the forces experienced during turns.
+
+The data collection occurred during multiple motorcycle rides, and the sensor data was recorded continuously. To process and analyze this large dataset, I used Python along with well-established libraries suitable for handling big data, specifically Pandas for data manipulation and Matplotlib for visualization. These tools enabled me to clean, transform, and visualize the data to gain a comprehensive understanding of my riding patterns.
+
+By focusing on the accelerometer data, I aim to develop a deeper understanding of my riding technique, particularly in cornering, and identify areas for improvement based on quantitative analysis.
+
+\chapter{Data cleaning and preparation}
+
+Data cleaning and preparation is a critical step in any data analysis project. The quality of the analysis directly depends on the quality of the data, making it essential to thoroughly inspect and clean the dataset before proceeding with any analytical processes. This chapter details the steps taken to clean and prepare the data, ensuring that only accurate and relevant data points are used for further analysis.
+
+\section{Overview of the Data}
+
+The dataset consists of sensor measurements recorded at 25ms intervals during various motorcycle rides. Each entry in the dataset corresponds to a specific moment in time, capturing data from multiple sensors. The key sensor readings included in the dataset are as follows:
+
+\begin{itemize}
+    \item Accelerometer Readings (accX, accY, accZ): The accelerometer measures acceleration forces along the X, Y, and Z axes. These forces are expressed in milli-g (mg), where 1 g equals approximately 9.81 m/s². For example, an accelerometer reading of 1000 mg corresponds to an acceleration of approximately 1 g. The X, Y, and Z axes represent the forward/backward, side-to-side, and vertical directions, respectively. These readings provide critical insights into the forces experienced by the motorcycle during acceleration, braking, and cornering.
+    \item Gyroscope Readings (gyrX, gyrY, gyrZ): The gyroscope measures the rate of rotation around the X, Y, and Z axes, expressed in degrees per second. These readings indicate how the motorcycle is tilting, turning, or rolling, which are essential for understanding the dynamics of the ride, especially during sharp turns or changes in orientation. The X, Y, and Z axes correspond to roll (tilting side to side), pitch (tilting forward and backward), and yaw (turning left and right) movements, respectively.
+    \item Magnetometer Readings (magX, magY, magZ): The magnetometer measures the strength and direction of the magnetic field along the X, Y, and Z axes, expressed in microteslas ($\mu T$). These readings can be used to determine the orientation of the motorcycle relative to the Earth's magnetic field, which is useful for understanding heading direction and for navigation purposes.
+    \item Temperature Readings (temp): The temperature sensor records the ambient temperature during the ride, measured in degrees Celsius. While not directly related to the dynamics of the motorcycle's movement, temperature readings provide context about the environmental conditions during the ride, which could influence other sensor readings.
+    \item Timestamps (millis and insert\_time): Each data entry includes a timestamp, with millis representing the time in milliseconds since the start of the data recording, and insert\_time marking when the data was stored in the database. These timestamps are crucial for synchronizing data from different sensors and understanding the time sequence of events during the ride.
+\end{itemize}
+
+\section{Removal of Invalid Data Points}
+
+During the data cleaning process, the primary focus was on identifying and handling extreme values within the dataset. These extreme values were the only significant data issues detected and could potentially indicate sensor malfunctions or errors in data recording.
+
+A threshold of 10,000 mg (equivalent to 10 g) was chosen for accelerometer readings, and any values exceeding this threshold were flagged as potential errors. This value was selected strategically, as it is outside the plausible range for normal motorcycle operation, thus effectively capturing all extreme values without unnecessarily discarding valid data. Similarly, gyroscope readings exceeding 10,000 degrees were flagged. These extreme values were replaced with \ac{NaN} to prevent them from affecting the analysis.
+
+After flagging the extreme values and replacing them with \ac{NaN}, these gaps in the data were filled using a local average method with a window size of 3. This approach calculates the average of the values immediately before and after each \ac{NaN} value and uses this average to fill the gap. By doing so, the continuity of the data is maintained without introducing significant distortions, ensuring that the dataset remains consistent and ready for analysis.
+
+After replacing the \ac{NaN} values, the dataset was re-examined to ensure that the remaining data was within a plausible range. It was found that the accelerometer readings never exceeded 2000 mg or dropped below -2000 mg, which is a realistic range for accelerations experienced during motorcycle rides. This confirmation further validated the integrity of the data for subsequent analysis.
+
+With these steps completed, the dataset was deemed clean and ready for further analysis.
+
+\section{Handling Gaps in the Data}
+
+As the data was collected during various motorcycle rides, there were occasional gaps in the dataset corresponding to times when the motorcycle was not being ridden. These gaps naturally occurred during periods of inactivity. Given that these gaps represent periods with no riding activity, it was decided not to fill them with interpolated data. Interpolating these gaps would introduce inaccuracies and could lead to misleading conclusions. Therefore, the gaps were left unfilled to preserve the integrity of the dataset, ensuring that the analysis accurately reflects the actual riding conditions.
+
+\chapter{Exploratory data analysis}
+\chapter{Time series analysis}
+\chapter{Correlation and relationship analysis}
+\chapter{Conclusion and recommendations}

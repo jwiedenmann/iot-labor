@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Load the data from the CSV file
 file_path = 'C:\\Users\\jwiedenmann\\source\\dhbw_projects\\iot-labor\\data\\test2.csv'
@@ -45,15 +44,30 @@ if smooth_data:
     for column in sensor_columns:
         df[column] = df[column].rolling(window=smoothing_window, min_periods=1, center=True).mean()
 
-# Accelerometer Plot
-plt.figure(figsize=(14, 10))
-plt.plot(x_axis, df['accX'], label='accX')
-plt.plot(x_axis, df['accY'], label='accY')
-plt.plot(x_axis, df['accZ'], label='accZ')
-plt.title('Cleaned Accelerometer Readings Over Time')
-plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
-plt.ylabel('Acceleration (accX, accY, accZ)')
-plt.legend()
+# Create subplots for accelerometer values
+fig, axs = plt.subplots(3, 1, figsize=(14, 10), sharex=True)
+
+# Plot accX
+axs[0].plot(x_axis, df['accX'], label='accX', color='blue')
+axs[0].set_title('Accelerometer X Readings')
+axs[0].set_ylabel('Acceleration (accX)')
+axs[0].legend()
+
+# Plot accY
+axs[1].plot(x_axis, df['accY'], label='accY', color='green')
+axs[1].set_title('Accelerometer Y Readings')
+axs[1].set_ylabel('Acceleration (accY)')
+axs[1].legend()
+
+# Plot accZ
+axs[2].plot(x_axis, df['accZ'], label='accZ', color='red')
+axs[2].set_title('Accelerometer Z Readings')
+axs[2].set_xlabel('Milliseconds' if use_millis else 'Sample Index')
+axs[2].set_ylabel('Acceleration (accZ)')
+axs[2].legend()
+
+# Adjust layout and show the plot
+plt.tight_layout()
 plt.savefig('accelerometer_plot.png')
 plt.show()
 

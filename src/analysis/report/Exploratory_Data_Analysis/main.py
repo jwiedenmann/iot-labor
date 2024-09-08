@@ -38,7 +38,7 @@ use_millis = True  # Set this to True to use 'millis_adjusted', or False to use 
 x_axis = df['millis_adjusted'] if use_millis else range(len(df['millis_adjusted']))
 
 # Toggle smoothing on or off
-smooth_data = True  # Set this to False to disable smoothing
+smooth_data = False  # Set this to False to disable smoothing
 smoothing_window = 10  # Define the window size for smoothing
 
 if smooth_data:

@@ -1,3 +1,57 @@
 %!TEX root = ../../main.tex
 
-\chapter{Das dritte Kapitel}
+\chapter{Exploratory data analysis}
+
+The \ac{EDA} phase is essential to understand the structure, distribution, and potential anomalies in the dataset before moving on to more detailed analyses. For simplicity, the data used for these visualizations is a subset from one ride, rather than the entire dataset, in order to avoid overcomplicating the visual representations. This chapter provides a visual exploration of the key sensor readings, highlighting the main trends and identifying any problematic areas in the data.
+
+\section{Accelerometer Data}
+
+The accelerometer data captures the forces acting on the motorcycle during different phases of the ride. As shown in Figure \ref{fig:eda:accelerometer_plot}, the acceleration data for the X, Y, and Z axes appears within a plausible range, fluctuating between -1000 mg and +1000 mg, which corresponds to forces of approximately -1 g to +1 g. This range is consistent with normal motorcycle operation, including acceleration, deceleration, and lateral forces during cornering.
+
+The distribution of accelerometer readings suggests typical riding behavior, with some periods of more intense forces, likely indicating sharper turns or sudden accelerations and braking. Overall, the accelerometer data appears reliable and ready for further analysis.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.7\textwidth]{images/03/accelerometer_plot.png}
+    \caption{Accelerometer data plot.}
+    \label{fig:eda:accelerometer_plot}
+\end{figure}
+
+\section{Gyroscope Data}
+
+The gyroscope data, which measures the motorcycle's rate of rotation, shows issues with two of the three axes. As seen in Figure \ref{fig:eda:gyroscope_plot}, the gyroscope readings for the X and Y axes are near zero throughout the dataset, indicating potential sensor malfunction or incorrect data recording. Only the Z axis (which represents yaw, or rotation around the vertical axis) shows meaningful variation, consistent with the expected turning behavior during the rides.
+
+Given this issue, I have decided to exclude the gyrX and gyrY data from further analysis, as they do not provide reliable information. This decision ensures that the analysis focuses on accurate and relevant data, preventing potential distortions in the results.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.7\textwidth]{images/03/gyroscope_plot.png}
+    \caption{Gyroscope data plot.}
+    \label{fig:eda:gyroscope_plot}
+\end{figure}
+
+\section{Magnetometer Data}
+
+The magnetometer readings, which measure the motorcycle's orientation relative to the Earth's magnetic field, show clear and consistent fluctuations across all three axes (X, Y, and Z) as seen in Figure \ref{fig:eda:magnetometer_plot}. These fluctuations indicate changes in the motorcycle's heading and orientation during the ride. The magnetometer data appears reliable, showing plausible variations without any obvious errors or malfunctions. This data will be useful in understanding the motorcycle's directional changes.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.7\textwidth]{images/03/magnetometer_plot.png}
+    \caption{Magnetometer data plot.}
+    \label{fig:eda:magnetometer_plot}
+\end{figure}
+
+\section{Temperature Data}
+
+The temperature data, displayed in Figure \ref{fig:eda:temperature_plot}, shows a steady increase in temperature over time, with some fluctuations. This is consistent with the motorcycle's engine and surrounding environment warming up during the ride. While temperature data is not directly related to the dynamics of the motorcycle's motion, it provides useful contextual information about the riding conditions, which might influence sensor readings.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.7\textwidth]{images/03/temperature_plot.png}
+    \caption{Temperature data plot.}
+    \label{fig:eda:temperature_plot}
+\end{figure}
+
+\chapter{Time series analysis}
+\chapter{Correlation and relationship analysis}
+\chapter{Conclusion and recommendations}

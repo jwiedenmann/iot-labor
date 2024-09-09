@@ -31,10 +31,13 @@ for i in range(len(df['millis'])):
 
 df['millis_adjusted'] = millis_adjusted
 
-# Toggle variable to choose between 'millis_adjusted' or range(len(millis)) for the x-axis
-use_millis = True  # Set this to True to use 'millis_adjusted', or False to use the index range
+# Convert milliseconds to seconds for easier interpretation
+df['seconds'] = df['millis_adjusted'] / 1000
 
-x_axis = df['millis_adjusted'] if use_millis else range(len(df['millis_adjusted']))
+# Toggle variable to choose between 'seconds' or range(len(millis)) for the x-axis
+use_seconds = True  # Set this to True to use 'seconds', or False to use the index range
+
+x_axis = df['seconds'] if use_seconds else range(len(df['millis_adjusted']))
 
 # Toggle smoothing on or off
 smooth_data = True  # Set this to False to disable smoothing
@@ -62,21 +65,37 @@ axs[1].legend()
 # Plot accZ
 axs[2].plot(x_axis, df['accZ'], label='accZ', color='red')
 axs[2].set_title('Accelerometer Z Readings')
-axs[2].set_xlabel('Milliseconds' if use_millis else 'Sample Index')
+axs[2].set_xlabel('Time (Seconds)' if use_seconds else 'Sample Index')
 axs[2].set_ylabel('Acceleration (accZ)')
 axs[2].legend()
 
-# Adjust layout and show the plot
+# Adjust layout and show the accelerometer plots
 plt.tight_layout()
-plt.savefig('accelerometer_plot.png')
+plt.savefig('accelerometer_subplots_seconds.png')
 plt.show()
 
-# Gyroscope Plot
-plt.figure(figsize=(14, 10))
-plt.plot(x_axis, df['gyrZ'], label='gyrZ')
-plt.title('Cleaned Gyroscope Readings Over Time')
-plt.xlabel('Milliseconds' if use_millis else 'Sample Index')
-plt.ylabel('Gyroscope (gyrX, gyrY, gyrZ)')
+# Gyroscope Z Plot on its own page
+plt.figure(figsize=(14, 6))
+plt.plot(x_axis, df['gyrZ'], label='gyrZ', color='purple')
+plt.title('Gyroscope Z Readings Over Time')
+plt.xlabel('Time (Seconds)' if use_seconds else 'Sample Index')
+plt.ylabel('Gyroscope Z (gyrZ)')
 plt.legend()
-plt.savefig('gyroscope_plot.png')
+
+# Adjust layout and save the gyroscope plot
+plt.tight_layout()
+plt.savefig('gyroscope_z_plot.png')
+plt.show()
+
+# Temperature Plot on its own page
+plt.figure(figsize=(14, 6))
+plt.plot(x_axis, df['temp'], label='Temperature', color='orange')
+plt.title('Temperature Readings Over Time')
+plt.xlabel('Time (Seconds)' if use_seconds else 'Sample Index')
+plt.ylabel('Temperature (°C)')
+plt.legend()
+
+# Adjust layout and save the temperature plot
+plt.tight_layout()
+plt.savefig('temperature_plot.png')
 plt.show()

@@ -2,7 +2,82 @@
 
 \chapter{Time series analysis}
 
+In this chapter, we perform a time series analysis of the accelerometer, gyroscope Z-axis, and temperature data, focusing on the initial period of the motorcycle ride. This period includes multiple phases: the motorcycle standing still, being turned on, interactions with the motorcycle, being picked up from the side stand, the beginning of the ride, and the effects of environmental factors like temperature.
 
+\section{Time Series Analysis of Gyroscope Z-Axis (gyrZ)}
 
-\chapter{Correlation and relationship analysis}
-\chapter{Conclusion and recommendations}
+The gyroscope Z-axis (gyrZ) data was initially thought to represent the yaw (rotation around the vertical axis), but based on observations and analysis, it appears to represent the roll axis (tilt or side-to-side leaning of the motorcycle). The time series plot of gyrZ for the first 120 seconds is shown in Figure \ref{fig:tsa:gyroscopeZAxisDetails}.
+
+\begin{itemize}
+    \item \textbf{Initial Phase (0-60 seconds):} In the first part of the time series, the motorcycle is stationary, as indicated by minimal fluctuations in the gyrZ readings. These small fluctuations are likely the result of minor sensor noise or slight shifts in the motorcycle's balance while stationary.
+
+    \item \textbf{Turning On and Picking Up (60-85 seconds):} Around 60 seconds, a sharp spike is observed in gyrZ, indicating the motorcycle being picked up from the side stand. If gyrZ were representing the yaw axis (rotation around the vertical axis), we would expect less drastic changes in this period. Instead, this spike is indicative of the motorcycle tilting to the side while being lifted, suggesting that gyrZ is indeed measuring the roll or tilt angle.
+
+    \item \textbf{Beginning of the Ride (85-120 seconds):} As the ride begins, the gyrZ readings show substantial oscillations, reflecting the tilting of the motorcycle during cornering. These oscillations align with lateral forces seen in the accelerometer's accY readings, which further supports the idea that gyrZ is measuring the roll (tilt) rather than the yaw (turn) of the motorcycle.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.5\textwidth]{images/04/Gyro_Details.png}
+    \caption{Gyroscope z-axis plot of the first 120 seconds.}
+    \label{fig:tsa:gyroscopeZAxisDetails}
+\end{figure}
+
+\section{Time Series Analysis of Accelerometer Data}
+
+The accelerometer measures forces along three axes (accX, accY, accZ). To determine which axis corresponds to which movement (forward/backward, lateral, vertical), we analyze the behavior of each axis during specific events like the stationary phase, motorcycle pickup, and the ride's start. The time series plots for each axis over the first 120 seconds are shown in Figure \ref{fig:tsa:accelerometerDetails}.
+
+\begin{enumerate}
+    \item \textbf{accX - Forward/Backward Acceleration:}
+          \begin{itemize}
+              \item \textbf{Stationary period:} During the stationary phase (0-60 seconds), accX is slightly negative, likely due to minor sensor noise or an uneven ground. The absence of large fluctuations suggests that accX aligns with forward/backward motion.
+              \item \textbf{Ride start:} After 85 seconds, accX shows spikes corresponding to forward acceleration and braking, confirming that accX captures forward/backward forces.
+          \end{itemize}
+
+    \item \textbf{accY - Lateral (Side-to-Side) Forces:}
+          \begin{itemize}
+              \item \textbf{Motorcycle pickup:} At 60 seconds, a spike in accY aligns with the lateral shift when the motorcycle is lifted off the side stand.
+              \item \textbf{Cornering:} From 85 seconds onward, accY shows large oscillations during cornering, indicating that accY captures lateral forces.
+          \end{itemize}
+    \item \textbf{accZ - Vertical Forces (Including Gravity):}
+          \begin{itemize}
+              \item \textbf{Stationary period:} During the stationary phase, accZ is near 1000 mg, representing gravitational force.
+              \item \textbf{Bumps and elevation changes:} After 85 seconds, accZ shows dips, corresponding to vertical movement during bumps or shifts. Thus, accZ captures vertical forces, including gravity and road variations.
+          \end{itemize}
+\end{enumerate}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.5\textwidth]{images/04/Accelerometer_Details.png}
+    \caption{Accelerometer data plot of the first 120 seconds.}
+    \label{fig:tsa:accelerometerDetails}
+\end{figure}
+
+\section{Temperature Data Analysis}
+
+The temperature data, shown in Figure \ref{fig:tsa:temperatureDetails}, covers the first 500 seconds of the ride and highlights how environmental conditions evolve.
+
+\begin{itemize}
+    \item \textbf{Initial Phase (0-100 seconds):} There is a steep initial temperature increase, which corresponds to the motorcycle being moved from a cooler garage to a hot day outside. The temperature rise slows as it approaches the ambient temperature.
+
+    \item \textbf{Stable Increase (100-250 seconds):} Between 100 and 250 seconds, the temperature rises more gradually as the motorcycle runs, but the exhaust system hasn't yet affected the surrounding area significantly.
+    
+    \item\textbf{Exhaust Influence (250-500 seconds):} At around 250 seconds, the temperature starts to increase at a faster rate due to the proximity of the exhaust gases to the Arduino sensor (mounted beneath the back seat). The exhaust continues to heat up, leading to a faster rise in temperature. While not shown in this figure, we expect the temperature to level off around 50°C once the exhaust reaches its steady operating temperature.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.5\textwidth]{images/04/Temperature_Details.png}
+    \caption{Temperature data plot of the first 500 seconds.}
+    \label{fig:tsa:temperatureDetails}
+\end{figure}
+
+\section{Observations for Future Analysis}
+
+\begin{itemize}
+    \item \textbf{Axis Identification for Rotational Transformations:} Now that we know accX, accY, and accZ correspond to forward/backward, lateral, and vertical forces respectively, we can use this understanding for future transformations into the Earth's reference frame.
+
+    \item \textbf{Gravity Adjustment:} Vertical forces recorded by accZ include gravity, which will need to be adjusted based on the roll angle (gyrZ) when rotating the forces into the Earth's reference frame.
+    
+    \item \textbf{Temperature Considerations:} The temperature data shows how environmental factors (e.g., heat from the exhaust) evolve over time. These temperature changes could affect sensor performance, so further analysis will need to account for any potential temperature-related effects on the sensors.
+\end{itemize}

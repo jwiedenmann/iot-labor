@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the data from the CSV file
-file_path = 'C:\\Users\\jwiedenmann\\source\\dhbw_projects\\iot-labor\\data\\test2.csv'
+file_path = 'C:\\Users\\jwiedenmann\\source\\dhbw_projects\\iot-labor\\data\\2024-08-15.csv'
 df = pd.read_csv(file_path, delimiter=';')
 
 # Define the columns to clean
@@ -47,14 +47,17 @@ if smooth_data:
     for column in sensor_columns:
         df[column] = df[column].rolling(window=smoothing_window, min_periods=1, center=True).mean()
 
-# Correlation Analysis between temperature and other columns
-correlation_matrix = df[sensor_columns].corr()
+# Adding 'millis' to the columns for correlation analysis
+sensor_columns_with_millis = sensor_columns + ['millis']
 
-# Display the correlation matrix
-print("Correlation Matrix:")
-print(correlation_matrix)
+# Correlation Analysis including the 'temp' column with itself and 'millis'
+correlations_with_temp = df[sensor_columns_with_millis].corr()['temp']  # Now we don't drop the 'temp'
 
-# Plot the correlation heatmap if needed
-plt.matshow(correlation_matrix, cmap='coolwarm')
-plt.colorbar()
+# Display the correlation values, including 'temp' with itself and 'millis'
+print("Correlations with temperature (including itself and millis):")
+print(correlations_with_temp)
+
+# Plot the correlations including 'temp' with itself and 'millis'
+correlations_with_temp.plot(kind='bar', title="Correlation of Temperature with Other Sensors (Including millis and itself)")
+plt.ylabel("Correlation Coefficient")
 plt.show()

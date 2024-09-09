@@ -1,4 +1,0 @@
-- Data Cleaning
-- Gaps in Data
-- Missing Gyro Values
-- Temporal trends and patterns beschreiben/gedanken machen, in wie weit es angewendet werden kann

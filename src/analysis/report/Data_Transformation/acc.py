@@ -46,20 +46,33 @@ df['accX_smoothed'] = df['accX'].rolling(window=smoothing_window, center=True).m
 df['accY_smoothed'] = df['accY'].rolling(window=smoothing_window, center=True).mean()
 df['accZ_smoothed'] = df['accZ'].rolling(window=smoothing_window, center=True).mean()
 
-# Plotting (This section remains untouched)
-plt.figure(figsize=(14, 10))
+# Correction for sensor mounting pitch angle (-11.16 degrees)
+pitch_angle_rad = np.deg2rad(11.5)  # Convert +11.16 degrees (upwards) to radians
+cos_pitch = np.cos(pitch_angle_rad)
+sin_pitch = np.sin(pitch_angle_rad)
 
-# Acceleration X-axis
-plt.subplot(3, 1, 1)
+# Apply the correct rotation matrix to adjust the X and Z axes
+df['accX_corrected'] = df['accX_smoothed'] * cos_pitch + df['accZ_smoothed'] * sin_pitch
+df['accZ_corrected'] = -df['accX_smoothed'] * sin_pitch + df['accZ_smoothed'] * cos_pitch
+
+# Calculate the pitch-corrected tilt angle using the corrected accX and accZ
+df['pitch_corrected_angle'] = np.arctan2(df['accX_corrected'], df['accZ_corrected']) * (180 / np.pi)
+
+# Plotting (This section now includes the pitch-corrected angle)
+plt.figure(figsize=(14, 14))
+
+# Acceleration X-axis (Corrected)
+plt.subplot(4, 1, 1)
 plt.plot(x_axis, df['accX'], label='Original accX', alpha=0.5)
 plt.plot(x_axis, df['accX_smoothed'], label='Smoothed accX', linewidth=2)
-plt.title('Acceleration X-axis Readings: Original vs Smoothed')
+plt.plot(x_axis, df['accX_corrected'], label='Corrected accX', linewidth=2, color='red')
+plt.title('Acceleration X-axis Readings: Original, Smoothed, and Corrected')
 plt.xlabel('Seconds' if use_seconds else 'Sample Index')
 plt.ylabel('Acceleration X (mg)')
 plt.legend()
 
-# Acceleration Y-axis
-plt.subplot(3, 1, 2)
+# Acceleration Y-axis (unchanged)
+plt.subplot(4, 1, 2)
 plt.plot(x_axis, df['accY'], label='Original accY', alpha=0.5)
 plt.plot(x_axis, df['accY_smoothed'], label='Smoothed accY', linewidth=2)
 plt.title('Acceleration Y-axis Readings: Original vs Smoothed')
@@ -67,13 +80,22 @@ plt.xlabel('Seconds' if use_seconds else 'Sample Index')
 plt.ylabel('Acceleration Y (mg)')
 plt.legend()
 
-# Acceleration Z-axis
-plt.subplot(3, 1, 3)
+# Acceleration Z-axis (Corrected)
+plt.subplot(4, 1, 3)
 plt.plot(x_axis, df['accZ'], label='Original accZ', alpha=0.5)
 plt.plot(x_axis, df['accZ_smoothed'], label='Smoothed accZ', linewidth=2)
-plt.title('Acceleration Z-axis Readings: Original vs Smoothed')
+plt.plot(x_axis, df['accZ_corrected'], label='Corrected accZ', linewidth=2, color='red')
+plt.title('Acceleration Z-axis Readings: Original, Smoothed, and Corrected')
 plt.xlabel('Seconds' if use_seconds else 'Sample Index')
 plt.ylabel('Acceleration Z (mg)')
+plt.legend()
+
+# Pitch Corrected Tilt Angle (accX_corrected vs accZ_corrected for pitch correction)
+plt.subplot(4, 1, 4)
+plt.plot(x_axis, df['pitch_corrected_angle'], label='Pitch Corrected Tilt Angle', linewidth=2, color='green')
+plt.title('Pitch Corrected Tilt Angle (Corrected accX vs accZ)')
+plt.xlabel('Seconds' if use_seconds else 'Sample Index')
+plt.ylabel('Tilt Angle (degrees)')
 plt.legend()
 
 plt.tight_layout()

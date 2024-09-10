@@ -70,21 +70,30 @@ df['comp_angle_bias_corrected_rad'] = np.deg2rad(df['comp_angle_bias_corrected']
 
 df['accY_earth'] = df['accY'] * np.cos(df['comp_angle_bias_corrected_rad']) - df['accZ_corrected'] * np.sin(df['comp_angle_bias_corrected_rad'])
 
-# Convert corrected accelerometer values to g-forces (by dividing by 1000)
+# Convert corrected accelerometer values to g's by dividing by 1000 (mg -> g)
 df['accX_g'] = df['accX_corrected'] / 1000
 df['accY_g'] = df['accY_earth'] / 1000
 
-# Plot peak g-forces with accY_g on X-axis and accX_g on Y-axis (without Z-axis)
+# Method 1: Clipping Outliers
+# Set thresholds to remove extreme values (e.g., clipping data between -3g and 3g)
+df['accX_g_clipped'] = df['accX_g'].clip(lower=-3, upper=3)
+df['accY_g_clipped'] = df['accY_g'].clip(lower=-3, upper=3)
+
+# Method 2: Smoothing Data with a rolling mean
+df['accX_g_smoothed'] = df['accX_g_clipped'].rolling(window=4, center=True).mean()
+df['accY_g_smoothed'] = df['accY_g_clipped'].rolling(window=4, center=True).mean()
+
+# Plot peak accelerations with accY_g_smoothed on X-axis and accX_g_smoothed on Y-axis
 plt.figure(figsize=(10, 8))
-plt.scatter(df['accY_g'], df['accX_g'], alpha=0.6, color='blue', s=10)
+plt.scatter(df['accY_g_smoothed'], df['accX_g_smoothed'], alpha=0.5, color='blue', s=5)  # Reducing size and increasing transparency
 
 # Add reference lines at 1.2g and -2g on Y-axis, 1.5g and -1.5g on X-axis
 plt.axhline(y=1.2, color='red', linestyle='--', label='Y-axis = 1.2g')
-plt.axhline(y=-2.0, color='red', linestyle='--', label='Y-axis = -2g')
+plt.axhline(y=-1.8, color='red', linestyle='--', label='Y-axis = -2g')
 plt.axvline(x=1.5, color='green', linestyle='--', label='X-axis = 1.5g')
 plt.axvline(x=-1.5, color='green', linestyle='--', label='X-axis = -1.5g')
 
-plt.title('Peak Acceleration: Corrected accX vs Corrected accY')
+plt.title('Peak Acceleration: Corrected accX vs Corrected accY (Clipped and Smoothed)')
 plt.xlabel('Corrected Lateral Acceleration (g, accY)')
 plt.ylabel('Corrected Longitudinal Acceleration (g, accX)')
 plt.grid(True)

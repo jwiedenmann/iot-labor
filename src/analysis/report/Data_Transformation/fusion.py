@@ -73,8 +73,22 @@ df['accZ_earth'] = df['accY'] * np.sin(df['comp_angle_bias_corrected_rad']) + df
 
 # Keep gravity in the Z-axis (do not remove g)
 
-# Plot the original and corrected accelerations
+# Calculate and print the means
+print("\nMean Values Before and After Correction:")
 
+print("\nX-axis Mean:")
+print("Original:", df['accX'].mean())
+print("Corrected:", df['accX_corrected'].mean())
+
+print("\nY-axis Mean:")
+print("Original:", df['accY'].mean())
+print("Corrected:", df['accY_earth'].mean())
+
+print("\nZ-axis Mean:")
+print("Original:", df['accZ'].mean())
+print("Corrected:", df['accZ_earth'].mean())
+
+# Plot the original and corrected accelerations
 plt.figure(figsize=(14, 10))
 
 # Acceleration X-axis (Corrected for pitch)

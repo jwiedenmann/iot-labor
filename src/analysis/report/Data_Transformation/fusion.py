@@ -37,19 +37,12 @@ df['seconds'] = df['millis_adjusted'] / 1000
 # Recalculate delta_time
 df['delta_time'] = np.diff(df['seconds'], prepend=df['seconds'].iloc[0])
 
-# Apply Moving Average to the gyroscope Z-axis data
-smoothing_window = 20  # You can adjust the window size
-df['gyrZ_smoothed'] = df['gyrZ'].rolling(window=smoothing_window, center=True).mean()
-
 # Recalculate the tilt angle using atan2(accY, accZ)
 df['acc_angle_corrected_alt'] = np.arctan2(df['accY'], df['accZ']) * 180 / np.pi
 
-# Estimate gyroscope bias (assuming the beginning of the data when the motorcycle is stationary)
-gyro_bias = df['gyrZ'].iloc[:100].mean()
-
 # Adjust gyroscope data by subtracting the bias
+gyro_bias = df['gyrZ'].iloc[:100].mean()
 df['gyrZ_bias_corrected'] = df['gyrZ'] - gyro_bias
-df['gyrZ_smoothed_bias_corrected'] = df['gyrZ_smoothed'] - gyro_bias
 
 # Initialize variables for complementary filter with bias-corrected gyroscope data
 alpha = 0.95  # Filter coefficient
@@ -63,26 +56,3 @@ for i in range(1, len(df)):
         alpha * (df['comp_angle_bias_corrected'].iloc[i-1] + df['gyrZ_bias_corrected'].iloc[i] * df['delta_time'].iloc[i])
     ) + ((1 - alpha) * df['acc_angle_corrected_alt'].iloc[i])
 
-# Apply complementary filter for smoothed bias-corrected data
-df.loc[0, 'comp_angle_smoothed_bias_corrected'] = df['acc_angle_corrected_alt'].iloc[0]
-
-for i in range(1, len(df)):
-    df.loc[i, 'comp_angle_smoothed_bias_corrected'] = (
-        alpha * (df['comp_angle_smoothed_bias_corrected'].iloc[i-1] + df['gyrZ_smoothed_bias_corrected'].iloc[i] * df['delta_time'].iloc[i])
-    ) + ((1 - alpha) * df['acc_angle_corrected_alt'].iloc[i])
-
-# Plot and save each figure separately
-
-plt.figure(figsize=(10, 6))
-plt.plot(df['seconds'], df['comp_angle_bias_corrected'], label='Complementary Filter Angle (Bias Corrected)', linewidth=2)
-plt.plot(df['seconds'], df['comp_angle_smoothed_bias_corrected'], label='Complementary Filter Smoothed Angle (Bias Corrected)', linewidth=2)
-plt.title('Calculated Lean Angle using Complementary Filter (Bias Corrected)')
-plt.xlabel('Seconds')
-plt.ylabel('Lean Angle (degrees)')
-plt.legend()
-plt.tight_layout()
-plt.savefig('complementary_filter_angle.png')
-plt.show()
-plt.close()
-
-print("Plots saved as files in the current folder.")

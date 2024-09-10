@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the data from the CSV file
-file_path = 'C:\\Users\\jwiedenmann\\source\\dhbw_projects\\iot-labor\\data\\test.csv'
+file_path = 'C:\\Users\\jwiedenmann\\source\\dhbw_projects\\iot-labor\\data\\test2.csv'
 df = pd.read_csv(file_path, delimiter=';')
 
 # Define the columns to clean
@@ -70,19 +70,25 @@ df['comp_angle_bias_corrected_rad'] = np.deg2rad(df['comp_angle_bias_corrected']
 
 df['accY_earth'] = df['accY'] * np.cos(df['comp_angle_bias_corrected_rad']) - df['accZ_corrected'] * np.sin(df['comp_angle_bias_corrected_rad'])
 
-# Convert corrected accelerometer values to g-forces
-g_force_conversion = 9.81  # Earth's gravitational constant
+# Convert corrected accelerometer values to g-forces (by dividing by 1000)
+df['accX_g'] = df['accX_corrected'] / 1000
+df['accY_g'] = df['accY_earth'] / 1000
 
-df['accX_g_force'] = df['accX_corrected'] / g_force_conversion
-df['accY_g_force'] = df['accY_earth'] / g_force_conversion
-
-# Plot peak g-forces with accY_g_force on X-axis and accX_g_force on Y-axis (without Z-axis)
+# Plot peak g-forces with accY_g on X-axis and accX_g on Y-axis (without Z-axis)
 plt.figure(figsize=(10, 8))
-plt.scatter(df['accY_g_force'], df['accX_g_force'], alpha=0.6, color='blue', s=10)
-plt.title('Peak G-Forces: Corrected accX vs Corrected accY')
-plt.xlabel('Corrected Lateral Acceleration (g-force, accY)')
-plt.ylabel('Corrected Longitudinal Acceleration (g-force, accX)')
+plt.scatter(df['accY_g'], df['accX_g'], alpha=0.6, color='blue', s=10)
+
+# Add reference lines at 1.2g and -2g on Y-axis, 1.5g and -1.5g on X-axis
+plt.axhline(y=1.2, color='red', linestyle='--', label='Y-axis = 1.2g')
+plt.axhline(y=-2.0, color='red', linestyle='--', label='Y-axis = -2g')
+plt.axvline(x=1.5, color='green', linestyle='--', label='X-axis = 1.5g')
+plt.axvline(x=-1.5, color='green', linestyle='--', label='X-axis = -1.5g')
+
+plt.title('Peak Acceleration: Corrected accX vs Corrected accY')
+plt.xlabel('Corrected Lateral Acceleration (g, accY)')
+plt.ylabel('Corrected Longitudinal Acceleration (g, accX)')
 plt.grid(True)
+plt.legend(loc='upper right')
 plt.tight_layout()
 
 # Show the plot

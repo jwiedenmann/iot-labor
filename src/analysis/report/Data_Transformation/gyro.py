@@ -101,7 +101,6 @@ plt.close()
 # 3. Complementary Filter Angle with Bias Correction
 plt.figure(figsize=(10, 6))
 plt.plot(df['seconds'], df['comp_angle_bias_corrected'], label='Complementary Filter Angle (Bias Corrected)', linewidth=2)
-plt.plot(df['seconds'], df['comp_angle_smoothed_bias_corrected'], label='Complementary Filter Smoothed Angle (Bias Corrected)', linewidth=2)
 plt.title('Calculated Lean Angle using Complementary Filter (Bias Corrected)')
 plt.xlabel('Seconds')
 plt.ylabel('Lean Angle (degrees)')

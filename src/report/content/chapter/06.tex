@@ -69,3 +69,140 @@ The result of applying the complementary filter is a smooth and accurate lean an
 \subsection{Conclusion}
 
 By transforming the gyroscope data, applying bias correction, and fusing it with accelerometer data through a complementary filter, we were able to accurately estimate the motorcycle's lean angle during tilting events. This method allows us to combine the strengths of both sensors, reducing noise and drift, while maintaining the accuracy of the angle estimates over time.
+
+\section{Accelerometer Data Transformation}
+
+The accelerometer data provides key insights into the forces acting on the motorcycle, but the raw readings are influenced by the sensor's mounting position and the motorcycle's suspension system. Since the Arduino was mounted at an upward angle relative to the ground, the accelerometer readings require a correction to align them with the Earth's reference frame. However, this correction is not perfect due to dynamic changes in the motorcycle's angle caused by suspension movement. Furthermore, the absence of data from two gyroscope axes prevents us from fully compensating for all rotations. This section outlines the steps taken to correct the accelerometer data and discusses the limitations of these corrections.
+
+\subsection{Correction for Sensor Mounting Angle}
+
+The Arduino sensor was mounted at a tilt, specifically at an angle of approximately 11.5 degrees upwards from the horizontal plane. To correct the accelerometer readings, the X and Z axes needed to be rotated to account for this pitch angle. The correction was performed using a rotation matrix.
+
+The following rotation matrix was applied to correct for the sensor mounting angle:
+
+\[
+    \begin{bmatrix}
+        \text{accX}_{\text{corrected}} \\
+        \text{accZ}_{\text{corrected}} \\
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \cos(\theta_{\text{pitch}})  & \sin(\theta_{\text{pitch}}) \\
+        -\sin(\theta_{\text{pitch}}) & \cos(\theta_{\text{pitch}})
+    \end{bmatrix}
+    \begin{bmatrix}
+        \text{accX}_{\text{smoothed}} \\
+        \text{accZ}_{\text{smoothed}}
+    \end{bmatrix}
+\]
+
+Where:
+\begin{itemize}
+    \item $\theta_{\text{pitch}}$ is the pitch angle in radians (11.5 degrees converted to radians).
+    \item $\text{accX}_{\text{corrected}}$ and $\text{accZ}_{\text{corrected}}$ are the corrected accelerometer values after accounting for the mounting angle.
+\end{itemize}
+
+
+The resulting data is displayed in Figure \ref{fig:trans:accPitchAdj}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.55\textwidth]{images/06/accelerometer_pitch_correction.png}
+    \caption{Adjusted pitch in accelerometer data.}
+    \label{fig:trans:accPitchAdj}
+\end{figure}
+
+\subsection{Limitations Due to Suspension Movement and Missing Gyroscope Data}
+
+Although the pitch correction provides a more accurate representation of the forces acting on the motorcycle, it is not perfect for two reasons:
+
+\begin{itemize}
+    \item \textbf{Suspension Movement:} The motorcycle's suspension dynamically alters the tilt angle of the sensor, especially during acceleration, braking, and road bumps. As the suspension compresses or rebounds, the angle between the sensor and the ground changes, introducing inaccuracies in the corrected accelerometer values. This issue cannot be fully addressed with the available data.
+    \item \textbf{Missing Gyroscope Axes:} In an ideal setup, all three axes of the gyroscope would be available to track the motorcycle's orientation in space (roll, pitch, and yaw). Unfortunately, in this dataset, only the gyrZ axis is available, which tracks the roll angle. The missing gyrX and gyrY data prevent us from compensating for changes in the motorcycle's pitch and yaw during the ride, which would be necessary for a full correction.
+\end{itemize}
+
+These limitations mean that while the correction for the sensor mounting angle improves the accuracy of the accelerometer data, it does not account for dynamic changes in the sensor's orientation due to suspension movement or missing rotational information.
+
+\subsection{Conclusion}
+
+By correcting for the sensor's mounting angle, we were able to transform the accelerometer data into the Earth's reference frame, providing a more accurate representation of the motorcycle's dynamics. However, due to the effects of suspension movement and the absence of full gyroscope data, the correction is not perfect, and some error remains. These limitations must be considered when interpreting the results, particularly when analyzing dynamic changes in tilt and acceleration forces.
+
+\section{Sensor Fusion and Drawing the G-Forces Chart}
+
+In this section, we combine the techniques discussed earlier — the complementary filter for fusing the gyroscope and accelerometer data and the accelerometer correction for pitch — to calculate the accurate accelerations in the Earth's reference frame. Finally, we use the fused data to draw the G-forces chart, which visualizes the peak accelerations experienced during the ride.
+
+\subsection{Sensor Fusion Process}
+
+Previously, we explained two key techniques:
+
+\begin{itemize}
+    \item \textbf{Complementary Filter:} This was used to blend the short-term precision of the gyroscope with the long-term stability of the accelerometer to estimate the motorcycle's lean angle.
+    \item \textbf{Accelerometer Correction:} We applied a correction to account for the pitch angle of the sensor, ensuring that the accelerometer readings accurately reflect the forces in the Earth's reference frame.
+\end{itemize}
+
+Now, these two approaches are combined to produce accurate accelerations. First, the complementary filter is applied to calculate the motorcycle's lean angle. Then, this lean angle is used to rotate the lateral and vertical accelerations from the motorcycle's frame of reference into the Earth's frame of reference.The resulting data is presented in Figure \ref{fig:trans:fusion}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.5\textwidth]{images/06/fusion.png}
+    \caption{Combined Complementary Filter and pitch corrected data.}
+    \label{fig:trans:fusion}
+\end{figure}
+
+\subsection{Drawing the G-Forces Chart}
+
+With the accelerations now accurately represented in the Earth's reference frame, the next step is to analyze the G-forces acting on the motorcycle. G-forces are the accelerations experienced by the motorcycle during maneuvers such as cornering and braking, measured in units of gravitational acceleration (g).
+
+The corrected accelerations were converted from milligrams (mg) to g's by dividing by 1000. To remove extreme outliers from the data, the accelerations were clipped between -3g and 3g. Then, a rolling average was applied to smooth the data for better visualization. The smoothed lateral and longitudinal accelerations were then plotted against each other to create the G-forces chart, showing the forces acting on the motorcycle during cornering, acceleration and braking.
+
+The chart presented in Figure \ref{fig:trans:gg} illustrates the peak accelerations acting on the motorcycle during cornering and braking. In total four reference markers were added to the chart. Two on each axis. These markers represent the limits of the motorcycles capabilities. Of course it is impossible to precisely know the limits of any motorcycle. So these markers represent estimates based upon MotoGP acceleration figures.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.5\textwidth]{images/06/gg.png}
+    \caption{Scatterplot of the g forces action on the motorcycle.}
+    \label{fig:trans:gg}
+\end{figure}
+
+\subsection{Analysis of the G-Forces Chart and Rider Skill Assessment}
+
+The G-forces chart plotted the corrected lateral (accY) and longitudinal (accX) accelerations experienced during the ride, with reference lines indicating the approximate limits of the motorcycle's capabilities. These thresholds represent the maximum G-forces the motorcycle can safely endure in terms of acceleration, braking, and cornering. By analyzing the distribution of data points relative to these limits, we can assess the rider’s performance and skill level.
+
+\subsubsection{G-Force Limits and Their Interpretation}
+
+The chart contains the following key reference lines:
+
+\begin{itemize}
+    \item \textbf{Lateral G-force thresholds (green lines):} +1.5g and -1.5g: These represent the lateral acceleration limits during cornering. A value above these thresholds indicates that the rider is approaching or exceeding the motorcycle’s grip limits during a turn, risking a potential slide or loss of control.
+    \item \textbf{Longitudinal G-force thresholds (red lines):}
+          \begin{itemize}
+              \item[$\bullet$] +1.2g: This represents the upper limit for longitudinal acceleration during hard braking.
+              \item[$\bullet$] -1.8g: This marks the limit for rapid acceleration, particularly under hard throttle applications.
+          \end{itemize}
+\end{itemize}
+
+\subsubsection{Distribution of Data Points}
+
+While the chart shows that some data points exceed the 1.5g threshold in cornering, it is important to recognize that this is likely due to measurement error or limitations in the data sampling rate. Given the sparse data and the nature of real-world road conditions, it is improbable that more than 1.5g was actually achieved during a turn. In reality, pushing the motorcycle to its full cornering potential on public roads is difficult, and the presence of traffic, speed limits, and other factors further limits the ability to consistently reach such high G-forces.
+
+That said, the chart does show that 1.2g was frequently achieved, and even 1.3g was reached on several occasions. These values indicate that the rider is consistently approaching the motorcycle's cornering limits. A lateral acceleration of 1.2g corresponds to a lean angle of around 50 degrees, which is substantial and reflect confident and controlled cornering. For reference, professional riders on race tracks often lean their bikes at angles over 60 degrees, but achieving lean angles above 50 degrees on public roads is already indicative of an advanced riding skill level.
+
+The chart shows that the rider frequently approached the 1.2g limit during acceleration, demonstrating good throttle control and the ability to push the motorcycle to its longitudinal acceleration limits. The consistent presence of data points near this threshold indicates that the rider is confident in applying strong throttle inputs, especially when exiting corners. The chart reveals that the rider frequently achieves high acceleration forces when powering out of turns, showing proficiency in managing acceleration.
+
+In contrast to the strong acceleration performance, the braking data shows a noticeable gap. While the rider frequently reaches about -1g during braking, they rarely approach the -1.5g or -1.8g limits. This suggests that the rider may not be applying the full braking potential of the motorcycle. The absence of data points near the lower G-force thresholds in the chart indicates a lack of aggressive braking, particularly when entering corners.
+
+\subsubsection{Lack of Trail Braking}
+
+The distribution of data points in the G-forces chart shows a distinct absence of hard braking forces leading into corners, a key technique known as trail braking. Trail braking involves gradually releasing the brake as you lean into a corner, allowing for smoother transitions and improved cornering speed. The chart indicates that the rider is not braking hard into corners. Instead, it appears that the rider tends to glide into corners, allowing the bike to slow down naturally or with light braking before pushing the motorcycle into the lean and accelerating hard out of the turn.
+
+This is evidenced by the missing data points at the lower portion of the G-forces chart, where hard braking into corners would be represented. In contrast, a well-executed trail braking maneuver would show more significant negative G-forces combined with lateral forces as the rider brakes deeper into the corner, gradually reducing braking while leaning the bike. The current pattern of braking indicates that the rider is not maximizing corner entry speed through trail braking.
+
+\subsubsection{Rider Skill Assessment}
+
+The G-forces chart reveals a mixed assessment of the rider's skills:
+
+\begin{itemize}
+    \item \textbf{Cornering:} Reaching lateral accelerations of 1.2g implies that the rider is regularly leaning the motorcycle at angles of 50 degrees, which is a solid indicator of skill. This shows that the rider is confident in their cornering ability and able to push the motorcycle's handling capabilities, while still respecting the limitations imposed by public road environments.
+
+    \item \textbf{Acceleration and Braking:} The rider demonstrates excellent control over the motorcycle's acceleration, frequently approaching the 1.2g limit. This indicates a strong ability to manage throttle input and exit corners with speed and control, leveraging the motorcycle's power effectively. The braking performance is more conservative, with the rider staying well below the -1.5g or -1.8g limits. This suggests that the rider is not braking as hard as the motorcycle allows, especially when entering corners. The absence of significant negative G-forces in combination with lateral forces suggests that trail braking is not being used effectively. This points to an area for improvement in the rider's technique.
+\end{itemize}

@@ -1,3 +1,71 @@
 %!TEX root = ../../main.tex
 
 \chapter{Data Transformation}
+
+In this chapter, we describe the process of transforming the sensor data from the motorcycle's reference frame to the Earth's reference frame in order to analyze the true forces acting on the motorcycle during the ride. This transformation is essential for understanding the motorcycle's dynamics, particularly during acceleration, braking, and cornering. The chapter is structured into four main sections: transforming the gyroscope values, transforming the accelerometer values, fusing the two sensor datasets, and visualizing the g-forces chart.
+
+Additionally, the magnetometer data was considered but discarded due to high levels of noise, which rendered it unreliable for this analysis.
+
+\section{Gyroscope Data Transformation}
+
+In this section, we focus on the transformation of the gyroscope data to estimate the motorcycle's lean angle. The gyroscope data, specifically the Z-axis readings (gyrZ), is used to capture the angular velocity around the roll axis. By processing and filtering this data, and then combining it with accelerometer data using a complementary filter, we can accurately estimate the motorcycle's lean angle over time. This section describes the steps taken to clean, smooth, and transform the gyroscope data to provide meaningful insights about the motorcycle's dynamics.
+
+\subsection{Initial Setup and Data Loading}
+
+For this analysis, a smaller dataset was used to test the transformation process. The dataset contains information from a stationary motorcycle that was lifted from the side stand and tilted manually twice. Once on an incline and once on a flat surface. The goal of the analysis was to estimate the lean angle during these tilting events and use this information in subsequent transformations. The gyroscope data from this dataset is displayed in Figure \ref{fig:trans:gyroscope_zaxis}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.55\textwidth]{images/06/gyroscope_z_axis_corrected.png}
+    \caption{Gyroscope Data of the Data Transformation dataset.}
+    \label{fig:trans:gyroscope_zaxis}
+\end{figure}
+
+\subsection{Calculating the Tilt Angle from Accelerometer Data}
+
+While gyroscopes provide angular velocity, the accelerometer provides a complementary source of information about the tilt of the motorcycle, based on gravitational forces. The tilt angle can be calculated from the accelerometer readings using the arctangent function:
+
+\[
+    \theta_{\text{tilt}} = \arctan2(\text{accY}, \text{accZ})
+\]
+
+This formula uses the lateral and vertical acceleration values to compute the tilt angle. Since the accelerometer is also sensitive to external forces like bumps and vibrations, this data is filtered for noise.
+
+The calculated tilt angle from the accelerometer is plotted over time in Figure \ref{fig:trans:accelerometerTilt}. It is showing the tilt behavior during the two tilting events. The accelerometer provides an absolute tilt measurement but can be influenced by noise and external forces, making it necessary to combine it with gyroscope data for a more accurate estimate.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.55\textwidth]{images/06/accelerometer_tilt_angle.png}
+    \caption{Tilt angle of the motorcycle calculated using the accelerometer data.}
+    \label{fig:trans:accelerometerTilt}
+\end{figure}
+
+\subsection{Complementary Filter for Accurate Lean Angle Estimation}
+
+To fuse the gyroscope and accelerometer data and get an accurate estimate of the motorcycle's lean angle, a complementary filter was applied. The complementary filter combines the short-term accuracy of the gyroscope (angular velocity) with the long-term stability of the accelerometer (absolute tilt angle). The complementary filter equation is:
+
+\[
+    \theta_{\text{final}}(t) = \alpha \left( \theta_{\text{final}}(t-1) + \text{gyrZ}(t) \cdot \Delta t \right) + (1 - \alpha) \cdot \theta_{\text{acc}}
+\]
+
+Where:
+
+\begin{itemize}
+    \item $\alpha$ is the filter coefficient, typically set around 0.95.
+    \item $\theta_{\text{final}}$ is the final calculated lean angle.
+    \item $\theta_{\text{acc}}$ is the tilt angle derived from the accelerometer.
+    \item $\text{gyrZ}(t) \cdot \Delta t$ integrates the angular velocity to update the lean angle.
+\end{itemize}
+
+The result of applying the complementary filter is a smooth and accurate lean angle estimation. The combined gyroscope and accelerometer data provide both short-term angular velocity changes and long-term tilt stability, overcoming the limitations of using either sensor individually. The final result is visible in Figure \ref{fig:trans:compfilter}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[height=.55\textwidth]{images/06/complementary_filter_angle.png}
+    \caption{Tilt angle of the motorcycle calculated using the complementary filter.}
+    \label{fig:trans:compfilter}
+\end{figure}
+
+\subsection{Conclusion}
+
+By transforming the gyroscope data, applying bias correction, and fusing it with accelerometer data through a complementary filter, we were able to accurately estimate the motorcycle's lean angle during tilting events. This method allows us to combine the strengths of both sensors, reducing noise and drift, while maintaining the accuracy of the angle estimates over time.

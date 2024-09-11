@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the data from the CSV file
-file_path = 'C:\\Users\\jwiedenmann\\source\\dhbw_projects\\iot-labor\\data\\test2.csv'
+file_path = 'C:\\Users\\jwiedenmann\\source\\dhbw_projects\\iot-labor\\data\\2024-08-15.csv'
 df = pd.read_csv(file_path, delimiter=';')
 
 # Define the columns to clean
@@ -89,7 +89,7 @@ plt.scatter(df['accY_g_smoothed'], df['accX_g_smoothed'], alpha=0.5, color='blue
 
 # Add reference lines at 1.2g and -2g on Y-axis, 1.5g and -1.5g on X-axis
 plt.axhline(y=1.2, color='red', linestyle='--', label='Y-axis = 1.2g')
-plt.axhline(y=-1.8, color='red', linestyle='--', label='Y-axis = -2g')
+plt.axhline(y=-1.8, color='red', linestyle='--', label='Y-axis = -1.8g')
 plt.axvline(x=1.5, color='green', linestyle='--', label='X-axis = 1.5g')
 plt.axvline(x=-1.5, color='green', linestyle='--', label='X-axis = -1.5g')
 

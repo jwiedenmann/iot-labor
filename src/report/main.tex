@@ -12,76 +12,63 @@
 
 \begin{document}
 
-	% Cover
-	\begin{spacing}{1}
-		\input{ads/cover}
-	\end{spacing}
-	\newpage
+% Cover
+\begin{spacing}{1}
+	\input{ads/cover}
+\end{spacing}
+\newpage
 
-	\pagenumbering{Roman}
+\pagenumbering{Roman}
 
-	\newpage
+\newpage
 
-        % only page number in footer
-	\pagestyle{plain}
-	
-	% space bevore chapter headline
-	\RedeclareSectionCommand[beforeskip=\chapterMargin]{chapter}
+% only page number in footer
+\pagestyle{plain}
 
-	% Contents
-	\begin{spacing}{1.1}
-		\begingroup
-		
-		    % set subchapter depth
-			\setcounter{tocdepth}{2}
-			
-			\tableofcontents
-			\clearpage
-		\endgroup
-	\end{spacing}
-	\newpage
+% space bevore chapter headline
+\RedeclareSectionCommand[beforeskip=\chapterMargin]{chapter}
 
-	% Acronyms
-	\cleardoublepage
-    \input{content/acronyms}
+% Contents
+\begin{spacing}{1.1}
+	\begingroup
 
-	% List of Figures
-	\cleardoublepage
-	\listoffigures
+	% set subchapter depth
+	\setcounter{tocdepth}{2}
 
-	%List of Tables
-	\cleardoublepage
-	\listoftables
+	\tableofcontents
+	\clearpage
+	\endgroup
+\end{spacing}
+\newpage
 
-	% List of Listings
-	\cleardoublepage
-	\lstlistoflistings
-	\cleardoublepage
+% Acronyms
+\cleardoublepage
+\input{content/acronyms}
 
-	\pagenumbering{arabic}
-	
-	\pagestyle{headings}
+% List of Figures
+\cleardoublepage
+\listoffigures
 
-	%Content
-	\foreach \i in {01,02,03,04,05,06,07,08,09,...,99} {%
+\cleardoublepage
+\pagenumbering{arabic}
+
+\pagestyle{headings}
+
+%Content
+\foreach \i in {01,02,03,04,05,06,07,08,09,...,99} {%
 		\edef\FileName{content/chapter/\i .tex}%
-			\IfFileExists{\FileName}{%
-				\input{\FileName}
-			}
-			{%
-%				No chapter available
-			}
+		\IfFileExists{\FileName}{%
+			\input{\FileName}
+		}
+		{%
+			%				No chapter available
+		}
 	}
 
-	\clearpage
+\clearpage
 
-	% Bibilography
-	\cleardoublepage
-	\printbibliography
+% Bibilography
+\cleardoublepage
+\printbibliography
 
-	% Appendix
-	\clearpage
-	\appendix
-	\input{content/appendix}
-	
 \end{document}

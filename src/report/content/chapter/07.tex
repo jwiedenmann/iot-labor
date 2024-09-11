@@ -1,3 +1,15 @@
 %!TEX root = ../../main.tex
 
 \chapter{Conclusion and recommendations}
+
+In this project, we successfully gathered, cleaned, and analyzed a substantial dataset from a motorcycle's inertial measurement unit \ac{IMU}. Through the combination of sensor fusion techniques and data transformation, we were able to accurately assess the forces acting on the motorcycle and infer the riding behavior and performance. Several key findings emerged, including insights into the motorcycle's dynamics during acceleration, braking, and cornering, as well as areas for improvement in the rider's technique.
+
+Key Findings:
+
+\begin{enumerate}
+    \item \textbf{Sensor Fusion and Data Transformation:} We effectively combined gyroscope and accelerometer data using a complementary filter, allowing us to estimate lean angles and the forces acting on the motorcycle in the Earth's frame of reference. This was essential for analyzing the true dynamics of the motorcycle during various maneuvers.
+    \item \textbf{G-Force Analysis:} The G-force chart revealed the rider's ability to reach substantial lateral acceleration (1.2g and higher) during cornering, indicating advanced riding skills. However, it also showed a lack of aggressive braking, with few data points reaching the estimated braking limits of the motorcycle. This suggests that the rider could improve braking performance, especially during corner entry.
+    \item \textbf{Rider Skill Assessment:} The analysis of the data indicates that the rider is confident in cornering and acceleration, frequently reaching the motorcycle's limits in these areas. However, the absence of significant negative G-forces combined with lateral forces suggests that trail braking is not being used effectively, and this represents a key area for further skill development.
+\end{enumerate}
+
+This report provides a solid foundation for understanding the motorcycle's dynamics and assessing rider performance. With continued data collection and targeted practice, the rider can improve their skill set and push their riding ability further.
